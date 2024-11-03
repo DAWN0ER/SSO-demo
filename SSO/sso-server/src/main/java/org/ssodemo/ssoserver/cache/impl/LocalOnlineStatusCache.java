@@ -58,6 +58,9 @@ public class LocalOnlineStatusCache implements OnlineStatusCache {
 
     @Override
     public void loginUser(long userId, long keepAlive) {
+        if(userId<=0 || keepAlive <= 0){
+            return;
+        }
         long expiredTime = System.currentTimeMillis() + keepAlive;
         ONLINE_USER_CACHE.put(userId, expiredTime);
     }

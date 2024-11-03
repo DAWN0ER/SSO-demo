@@ -19,7 +19,7 @@ import java.util.Date;
 @Slf4j
 public class JwtUtil {
 
-    private static final long EXPIRATION_TIME = 7 * 24 * 3600_000; // 7 days
+    public static final long DEFAULT_EXPIRATION_TIME = 7 * 24 * 3600_000; // 7 days
 
     public static String generateToken(String userId) {
         // 从配置中心获取 key
@@ -27,7 +27,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setSubject(userId) // 唯一有用的 PayLoad 实际上就是 UserId
-                .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+                .setExpiration(new Date(System.currentTimeMillis() + DEFAULT_EXPIRATION_TIME))
                 .signWith(SignatureAlgorithm.HS512, jwtSecretKey)
                 .compact();
     }

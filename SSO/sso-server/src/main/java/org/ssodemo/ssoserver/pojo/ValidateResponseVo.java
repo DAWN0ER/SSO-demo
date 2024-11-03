@@ -13,8 +13,8 @@ import lombok.Data;
 @Data
 public class ValidateResponseVo {
 
-    private Integer status;
-    private Boolean renewable = false;
+    private boolean valid;
+    private boolean renewable = false;
     private String  updateToken;
 
 }
