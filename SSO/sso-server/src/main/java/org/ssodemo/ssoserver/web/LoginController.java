@@ -104,15 +104,18 @@ public class LoginController {
         }
         ValidateResponseVo responseVo = new ValidateResponseVo();
         if (Objects.isNull(userToken)) {
+            log.warn("没有登录信息!");
             responseVo.setValid(false);
             return responseVo;
         }
         Long userId = userToken.getUserId();
         if (Objects.isNull(userId)) {
+            log.warn("没有 UserId 信息!");
             responseVo.setValid(false);
             return responseVo;
         }
         boolean online = onlineStatusCache.isOnline(userId);
+        log.info("userId:{}, online:{}",userId,online);
         responseVo.setValid(online);
         // TODO 关于令牌更新的还没写
         return responseVo;

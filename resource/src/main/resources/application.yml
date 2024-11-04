@@ -3,3 +3,5 @@ server:
 spring:
   application:
     name: resource
+sso:
+  validate-location: "http://localhost/sso/api/validate"
