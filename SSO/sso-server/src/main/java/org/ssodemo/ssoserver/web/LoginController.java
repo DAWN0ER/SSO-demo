@@ -96,9 +96,7 @@ public class LoginController {
     }
 
     @GetMapping("/validate")
-    public ValidateResponseVo validate(
-            @RequestParam(required = false) String accessToken,
-            HttpServletRequest request, HttpServletResponse response) {
+    public ValidateResponseVo validate(@RequestParam(required = false) String accessToken) {
         UserToken userToken = AccessTokenUtil.get();
         if (Objects.nonNull(accessToken)) {
             // 两者都存在时，以参数传递的为准
