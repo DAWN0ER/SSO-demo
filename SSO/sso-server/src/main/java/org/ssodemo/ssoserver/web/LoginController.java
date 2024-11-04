@@ -36,7 +36,6 @@ public class LoginController {
     private static final String DEFAULT_PAGE = "/sso/success";
     private static final String ACC_TOKEN = "acc_token";
     private static final String DOMAIN = "localhost";
-    private static final String LOGOUT_TOKEN = "logout";
 
     @Resource
     @Qualifier("demoPasswordCheckServiceImpl")
@@ -51,8 +50,8 @@ public class LoginController {
         // 已经登录的不允许再次验证
         UserToken token = AccessTokenUtil.get();
         long tokenUserId = Optional.ofNullable(token).map(UserToken::getUserId).orElse(-1L);
-        if (tokenUserId >0 && onlineStatusCache.isOnline(tokenUserId)) {
-            log.info("已登录用户访问登录页面,user:{}",tokenUserId);
+        if (tokenUserId > 0 && onlineStatusCache.isOnline(tokenUserId)) {
+            log.info("已登录用户访问登录页面,user:{}", tokenUserId);
             response.sendRedirect(DEFAULT_PAGE);
             return;
         }
@@ -60,13 +59,13 @@ public class LoginController {
         Long userId = loginRequestVo.getUserId();
         String password = loginRequestVo.getPassword();
         if (Objects.isNull(userId) || Objects.isNull(password) || "".equals(password)) {
-            log.warn("Bad Request, userId:{},password:{}",userId,password);
+            log.warn("Bad Request, userId:{},password:{}", userId, password);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
         String redirect = Optional.ofNullable(loginRequestVo.getOriginalUrl()).orElse(DEFAULT_PAGE);
         if (!passwordCheckService.check(userId, password)) {
-            log.warn("未找到用户:userId:{}",userId);
+            log.warn("未找到用户:userId:{}", userId);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
@@ -75,6 +74,7 @@ public class LoginController {
         Cookie cookie = new Cookie(ACC_TOKEN, newToken);
         cookie.setMaxAge(30 * 24 * 3600);
         cookie.setDomain(DOMAIN);
+        cookie.setPath("/");
         response.addCookie(cookie);
         response.sendRedirect(redirect);
     }
@@ -82,13 +82,16 @@ public class LoginController {
     @PostMapping("/logout")
     public void logout(HttpServletRequest request, HttpServletResponse response) {
         UserToken token = AccessTokenUtil.get();
-        if(Objects.isNull(token) || Objects.isNull(token.getUserId())){
+        if (Objects.isNull(token) || Objects.isNull(token.getUserId())) {
+            log.warn("未登录用户登出");
             return;
         }
         onlineStatusCache.logoutUser(token.getUserId());
-        Cookie cookie = new Cookie(ACC_TOKEN, LOGOUT_TOKEN);
+        Cookie cookie = new Cookie(ACC_TOKEN, null);
         cookie.setDomain(DOMAIN);
+        cookie.setPath("/");
         cookie.setMaxAge(0);
+        log.info("用户:{} 登出下线", token.getUserId());
         response.addCookie(cookie);
     }
 
@@ -97,17 +100,17 @@ public class LoginController {
             @RequestParam(required = false) String accessToken,
             HttpServletRequest request, HttpServletResponse response) {
         UserToken userToken = AccessTokenUtil.get();
-        if(Objects.nonNull(accessToken)){
+        if (Objects.nonNull(accessToken)) {
             // 两者都存在时，以参数传递的为准
             userToken = JwtUtil.validate(accessToken);
         }
         ValidateResponseVo responseVo = new ValidateResponseVo();
-        if(Objects.isNull(userToken)){
+        if (Objects.isNull(userToken)) {
             responseVo.setValid(false);
             return responseVo;
         }
         Long userId = userToken.getUserId();
-        if(Objects.isNull(userId)){
+        if (Objects.isNull(userId)) {
             responseVo.setValid(false);
             return responseVo;
         }
