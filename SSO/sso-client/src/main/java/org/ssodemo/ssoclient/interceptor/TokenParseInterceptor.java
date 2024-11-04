@@ -3,9 +3,9 @@ package org.ssodemo.ssoclient.interceptor;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.lang.Nullable;
@@ -60,10 +60,9 @@ public class TokenParseInterceptor implements HandlerInterceptor {
             AccessTokenUtil.set(null);
             return true;
         }
-        try {
-            HttpClient client = HttpClients.createMinimal();
+        try (CloseableHttpClient client = HttpClients.createMinimal()) {
             URI uri = new URIBuilder(ssoServerUri).addParameter("accessToken", jwtStr).build();
-            log.info("发起校验请求:{}",uri.toString());
+            log.info("发起校验请求:{}", uri.toString());
             HttpResponse validResp = client.execute(new HttpGet(uri));
             if (Objects.isNull(validResp.getEntity())) {
                 AccessTokenUtil.set(null);
