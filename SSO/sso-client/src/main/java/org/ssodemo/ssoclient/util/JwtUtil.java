@@ -1,11 +1,11 @@
-package org.ssodemo.ssoserver.util;
+package org.ssodemo.ssoclient.util;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
-import org.ssodemo.ssoserver.pojo.UserToken;
+import org.ssodemo.ssoclient.domain.UserToken;
 
 import java.util.Date;
 

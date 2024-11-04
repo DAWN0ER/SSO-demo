@@ -15,7 +15,6 @@ import org.springframework.lang.Nullable;
 public class LoginRequestVo {
 
     private Long userId;
-    private String userName;
     private String password;
 
     @Nullable

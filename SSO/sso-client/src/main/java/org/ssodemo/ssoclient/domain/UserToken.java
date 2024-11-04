@@ -1,4 +1,4 @@
-package org.ssodemo.ssoserver.util;
+package org.ssodemo.ssoclient.domain;
 
 import lombok.Data;
 

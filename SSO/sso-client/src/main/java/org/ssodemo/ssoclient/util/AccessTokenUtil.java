@@ -1,7 +1,7 @@
-package org.ssodemo.ssoserver.util;
+package org.ssodemo.ssoclient.util;
 
 import com.alibaba.ttl.TransmittableThreadLocal;
-import org.ssodemo.ssoserver.pojo.UserToken;
+import org.ssodemo.ssoclient.domain.UserToken;
 
 /**
  * Created with IntelliJ IDEA.

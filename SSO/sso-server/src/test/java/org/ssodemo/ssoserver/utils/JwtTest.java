@@ -2,7 +2,7 @@ package org.ssodemo.ssoserver.utils;
 
 import org.junit.jupiter.api.Test;
 import org.ssodemo.ssoserver.util.JwtUtil;
-import org.ssodemo.ssoserver.util.UserToken;
+import org.ssodemo.ssoserver.pojo.UserToken;
 
 /**
  * Created with IntelliJ IDEA.

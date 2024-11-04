@@ -9,7 +9,7 @@ import org.ssodemo.ssoserver.pojo.ValidateResponseVo;
 import org.ssodemo.ssoserver.service.PasswordCheckService;
 import org.ssodemo.ssoserver.util.AccessTokenUtil;
 import org.ssodemo.ssoserver.util.JwtUtil;
-import org.ssodemo.ssoserver.util.UserToken;
+import org.ssodemo.ssoserver.pojo.UserToken;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -52,6 +52,7 @@ public class LoginController {
         UserToken token = AccessTokenUtil.get();
         long tokenUserId = Optional.ofNullable(token).map(UserToken::getUserId).orElse(-1L);
         if (tokenUserId >0 && onlineStatusCache.isOnline(tokenUserId)) {
+            log.info("已登录用户访问登录页面,user:{}",tokenUserId);
             response.sendRedirect(DEFAULT_PAGE);
             return;
         }
@@ -59,11 +60,13 @@ public class LoginController {
         Long userId = loginRequestVo.getUserId();
         String password = loginRequestVo.getPassword();
         if (Objects.isNull(userId) || Objects.isNull(password) || "".equals(password)) {
+            log.warn("Bad Request, userId:{},password:{}",userId,password);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
         String redirect = Optional.ofNullable(loginRequestVo.getOriginalUrl()).orElse(DEFAULT_PAGE);
         if (!passwordCheckService.check(userId, password)) {
+            log.warn("未找到用户:userId:{}",userId);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
         }
