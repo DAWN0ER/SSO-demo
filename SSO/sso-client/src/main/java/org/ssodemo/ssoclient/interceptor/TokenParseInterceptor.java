@@ -9,7 +9,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.springframework.lang.Nullable;
-import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.ssodemo.ssoclient.domain.UserToken;
 import org.ssodemo.ssoclient.domain.ValidateResponseVo;
@@ -32,7 +31,6 @@ import java.util.Objects;
  */
 
 @Slf4j
-@Component
 public class TokenParseInterceptor implements HandlerInterceptor {
 
     private final Gson gson = new Gson();
