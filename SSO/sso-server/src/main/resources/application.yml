@@ -1,0 +1,5 @@
+server:
+  port: 12309
+spring:
+  application:
+    name: sso-server
