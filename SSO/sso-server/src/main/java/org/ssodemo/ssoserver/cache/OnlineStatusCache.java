@@ -1,5 +1,7 @@
 package org.ssodemo.ssoserver.cache;
 
+import org.ssodemo.ssoserver.pojo.OnlineUserDto;
+
 /**
  * Created with IntelliJ IDEA.
  * Description:
@@ -12,5 +14,6 @@ public interface OnlineStatusCache {
     boolean isOnline(long userId);
     void loginUser(long userId, long keepAlive);
     void logoutUser(long userId);
+    OnlineUserDto getOnlineUser(long userId);
 
 }

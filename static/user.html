@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>用户页面</title>
+</head>
+
+<style>
+    /* 这是引入了一些字体 */
+    @import url('https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900');
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background-image: url('img/user-bk.jpg');
+        background-size: cover;
+        background-position: center;
+    }
+
+    .card {
+        position: relative;
+        top: 100px;
+        width: 350px;
+        height: 180px;
+        /* height: 450px; */
+        background: #fbebff;
+        border-radius: 20px;
+        box-shadow: 0 35px 80px rgba(0, 0, 0, 0.15);
+        transition: 0.5s;
+    }
+
+    .card:hover {
+        height: 450px;
+    }
+
+    .imgBx {
+        position: absolute;
+        left: 50%;
+        top: -50px;
+        transform: translateX(-50%);
+        width: 150px;
+        height: 150px;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.35);
+        overflow: hidden;
+        transition: 0.5s;
+    }
+
+    .card:hover .imgBx {
+        width: 250px;
+        height: 250px;
+    }
+
+    .imgBx img {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .card .content {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: flex-end;
+        overflow: hidden;
+    }
+
+    .card .content .details {
+        padding: 20px;
+        padding-bottom: 30px;
+        text-align: center;
+        width: 100%;
+        transition: 0.5s;
+        transform: translateY(150px);
+    }
+
+    .card:hover .content .details {
+        transform: translateY(0px);
+    }
+
+    .card .content .details h2 {
+        margin-bottom: 20px;
+        font-size: 1.25em;
+        font-weight: 600;
+        color: #555;
+        line-height: 1.1em;
+    }
+
+    .card .content .details .data {
+        display: flex;
+        justify-content: space-between;
+        margin: 20px 0;
+    }
+
+    .card .content .details .data h3 {
+        font-size: 1em;
+        color: #555;
+        line-height: 1.2em;
+        font-weight: 600;
+    }
+
+    .card .content .details .data h3 .s_label {
+        font-size: 0.85em;
+        font-weight: 400;
+        opacity: 0.5;
+    }
+
+    .card .content .details .actionBtn {
+        display: flex;
+        justify-content: center;
+    }
+
+    .card .content .details .actionBtn button {
+        margin-top: 5px;
+        padding: 10px 30px;
+        border-radius: 5px;
+        border: none;
+        outline: none;
+        font-size: 1em;
+        font-weight: 500;
+        background: #ff5f95;
+        color: #fff;
+        cursor: pointer;
+    }
+</style>
+
+<body>
+    <div class="card">
+        <div class="imgBx">
+            <img id="avatar" src="/img/default.jpg">
+        </div>
+        <div class="content">
+            <div class="details">
+                <h2 id="name">未登录</h2>
+                <h2 id="description">---</h2>
+                <div class="data">
+                    <h3>
+                        <span id="likes">---</span><br>
+                        <span class="s_label">Likes</span>
+                    </h3>
+                    <h3>
+                        <span id="followers">---</span><br>
+                        <span class="s_label">Followers</span>
+                    </h3>
+                    <h3><span id="following">---</span><br>
+                        <span class="s_label">Following</span>
+                    </h3>
+                </div>
+                <div class="actionBtn">
+                    <button onclick="logout()">登出</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+
+            fetch('http://localhost/user/api/info', {
+
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json;charset=utf-8',
+                }
+            })
+                .then(response => {
+                    if (response.status === 401) {
+                        redirect2login();
+                        throw error("401 未登录");
+                    }
+                    if (response.status == 403) {
+                        alert("无权访问!")
+                        throw error("403 Forbidden");
+                    }
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        throw error('未知错误');
+                    }
+                })
+                .then(data => {
+                    console.log(data);
+                    ['name', 'description', 'likes', 'followers', 'following'].forEach(function (item) {
+                        try {
+                            // 更新数据
+                            document.getElementById(item).textContent = data[item];
+                        }
+                        catch (error) {
+                            console.log(error);
+                        }
+                    });
+                    if (data['avatar'] != null && data['avatar'] != "") {
+                        document.getElementById('avatar').src = data['avatar'];
+                    }
+                })
+                .catch(error => {
+                    console.error('请求失败:', error);
+                });
+        });
+
+        function redirect2login() {
+            const original_url = encodeURIComponent(window.location.href);
+            const re_url = 'http://localhost/sso/login?original_url=' + original_url;
+            window.location.href = re_url;
+        }
+
+        function logout() {
+            console.log('logout!');
+            fetch('http://localhost/sso/api/logout', {
+                method: 'POST'
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('登出成功！');
+                    } else {
+                        throw error('请求异常');
+                    }
+                })
+                .catch(error => {
+                    alert('登出失败！', error);
+                });
+        }
+
+    </script>
+
+</body>
+
+</html>

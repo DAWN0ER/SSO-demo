@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录成功</title>
+<style>
+  body {
+    background-image: url("/img/success-bk.jpg");
+    background-size: cover;
+    background-position: center;
+    font-family: 'Arial', sans-serif;
+    background-color: #f4f4f4;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+  }
+
+  .container {
+    position: relative;
+    top: 80px;
+    text-align: center;
+    background-color: rgba(252, 69, 102, 0.1);
+    padding: 40px;
+    border-radius: 15px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    backdrop-filter: blur(10px);
+  }
+
+  h1 {
+    color: #e79faa;
+    margin-top: 10px;
+    padding: 10px;
+  }
+
+  .imgBx {
+        position: relative;
+        left: 50%;
+        margin-bottom: 10px;
+        transform: translateX(-50%);
+        width: 150px;
+        height: 150px;
+        background: #fff;
+        border-radius: 20px;
+        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.35);
+        overflow: hidden;
+        transition: 0.5s;
+    }
+
+    .container:hover .imgBx {
+        width: 200px;
+        height: 200px;
+    }
+
+    .imgBx img {
+        position: relative;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+</style>
+</head>
+<body>
+<div class="container">
+    <div class="imgBx">
+        <img id="avatar" src="/img/success.jpg">
+    </div>
+  <h1>您已成功登录</h1>
+</div>
+</body>
+</html>

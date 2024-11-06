@@ -4,18 +4,21 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 import org.ssodemo.ssoserver.cache.OnlineStatusCache;
+import org.ssodemo.ssoserver.enums.ValidStatusEnum;
 import org.ssodemo.ssoserver.pojo.LoginRequestVo;
+import org.ssodemo.ssoserver.pojo.OnlineUserDto;
+import org.ssodemo.ssoserver.pojo.UserToken;
 import org.ssodemo.ssoserver.pojo.ValidateResponseVo;
 import org.ssodemo.ssoserver.service.PasswordCheckService;
 import org.ssodemo.ssoserver.util.AccessTokenUtil;
 import org.ssodemo.ssoserver.util.JwtUtil;
-import org.ssodemo.ssoserver.pojo.UserToken;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -36,6 +39,7 @@ public class LoginController {
     private static final String DEFAULT_PAGE = "/sso/success";
     private static final String ACC_TOKEN = "acc_token";
     private static final String DOMAIN = "localhost";
+    private static final long RENEW_TIME = 2 * 3600_000;
 
     @Resource
     @Qualifier("demoPasswordCheckServiceImpl")
@@ -105,19 +109,26 @@ public class LoginController {
         ValidateResponseVo responseVo = new ValidateResponseVo();
         if (Objects.isNull(userToken)) {
             log.warn("没有登录信息!");
-            responseVo.setValid(false);
+            responseVo.setValid(ValidStatusEnum.OFFLINE.getCode());
             return responseVo;
         }
         Long userId = userToken.getUserId();
         if (Objects.isNull(userId)) {
             log.warn("没有 UserId 信息!");
-            responseVo.setValid(false);
+            responseVo.setValid(ValidStatusEnum.OFFLINE.getCode());
             return responseVo;
         }
-        boolean online = onlineStatusCache.isOnline(userId);
-        log.info("userId:{}, online:{}",userId,online);
-        responseVo.setValid(online);
-        // TODO 关于令牌更新的还没写
+        OnlineUserDto user = onlineStatusCache.getOnlineUser(userId);
+        if (Objects.isNull(user)) {
+            log.warn("没有保存的登录信息!");
+            responseVo.setValid(ValidStatusEnum.OFFLINE.getCode());
+            return responseVo;
+        }
+        log.info("userId:{}, 过期时间:{}", userId, new Date(user.getExpiredTime()));
+        responseVo.setValid(ValidStatusEnum.ONLINE.getCode());
+        if (user.getExpiredTime() - System.currentTimeMillis() < RENEW_TIME) {
+            // TODO 关于令牌更新的还没写
+        }
         return responseVo;
 
     }

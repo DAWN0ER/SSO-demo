@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登录界面</title>
+</head>
+
+<style>
+    body {
+        font-family: 'Courier New', Courier, monospace;
+        font-weight: 1000;
+        line-height: 1.6;
+        background-image: url('/img/login-bk.jpg');
+        background-size: cover;
+        background-position: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .login-container {
+        background-color: rgba(233, 249, 255, 0.8);
+        padding: 10px;
+        border-radius: 15px;
+        box-shadow: 0 20px 20px rgba(0, 0, 0, 0.7);
+        width: 300px;
+        max-width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .form-group {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+
+    .neon-text {
+        font-size: 2em;
+        color: #117fd8;
+        text-shadow: 0 0 10px #5cd1ff;
+    }
+
+
+    .form-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #07419f;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #7ebde0;
+        background-color: #eff7ff;
+        border-radius: 5px;
+        box-sizing: border-box;
+        color: #0c4266;
+        font-size: 15px;
+    }
+
+    .form-group button {
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        background-color: #118ecc;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+    }
+
+    .form-group button:hover {
+        background-color: #27619b;
+    }
+</style>
+
+<body>
+    <div class="login-container">
+        <h2 class="neon-text">用户认证</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">用户名</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">密码</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <button type="submit">登录</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault(); // 阻止表单默认提交行为
+            var userId = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            var originalUrl = new URLSearchParams(window.location.search).get('original_url');
+            var data = null;
+            if (originalUrl == null){
+                data = JSON.stringify({ userId, password })
+            } else {
+                originalUrl = decodeURI(originalUrl);
+                data = JSON.stringify({ userId, password, originalUrl})
+            }
+
+            // 例如，使用fetch API发送请求到服务器
+            fetch('/sso/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: data,
+            })
+                .then(response => {
+                    if (response.redirected) {
+                        window.location.href = response.url;
+                    }
+                });
+        });
+    </script>
+
+</body>
+
+</html>

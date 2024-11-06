@@ -3,6 +3,7 @@ package org.ssodemo.ssoserver.cache.impl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.ssodemo.ssoserver.cache.OnlineStatusCache;
+import org.ssodemo.ssoserver.pojo.OnlineUserDto;
 
 import java.util.concurrent.*;
 
@@ -69,5 +70,17 @@ public class LocalOnlineStatusCache implements OnlineStatusCache {
     @Override
     public void logoutUser(long userId) {
         ONLINE_USER_CACHE.remove(userId);
+    }
+
+    @Override
+    public OnlineUserDto getOnlineUser(long userId) {
+        if(!isOnline(userId)){
+           return null;
+        }
+        Long expiredTime = ONLINE_USER_CACHE.get(userId);
+        OnlineUserDto userDto = new OnlineUserDto();
+        userDto.setUserId(userId);
+        userDto.setExpiredTime(expiredTime);
+        return userDto;
     }
 }
