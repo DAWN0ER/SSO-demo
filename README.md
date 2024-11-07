@@ -1,7 +1,7 @@
 # SSO-demo
 一个实现 sso 单点登录的 demo 方案思路
 
-具体思路: 博客更新中
+具体思路: [博客](https://blog.mydawn.space/archives/hsqtU85J)
 
 ## 项目结构
 
@@ -11,15 +11,7 @@
 
 ## 接口设计
 
-- SSO-Server
-- SSO-client
-- Resource-Server
-
-### Restful-API
-
 ##### SSO-Server
-
-登录界面: /sso/login?original_url=[URL编码]
 
 默认登录成功界面：/sso/success
 
@@ -27,11 +19,10 @@
 
 | 接口描述       | URI       | 方法 | Request \ Response                                           |
 | -------------- | --------- | ---- | ------------------------------------------------------------ |
-| 登录接口       | /login    | POST | Request : userId, password, original_url<br />Response : 设置 cookie 和重定向 |
-| 登录校验接口   | /validate | GET  | Request : @Nullable acc_token<br />Response :  valid, renewable, updateToken |
+| 登录接口       | /login    | POST | Request : userId, password, originalUrl<br />Response : 设置 cookie 和重定向 |
+| 登录校验接口   | /validate | GET  | Request : @Nullable acc_token<br />Response :  valid, updateToken |
 | 登出接口       | /logout   | POST | Request : 无<br />Response :  删除 Cookie                    |
 | Token 续期接口 | /renewal  | POST | Request：updateToken<br />Response : 更新 cookie             |
-
 ##### SSO-client SSO
 
 Spring MVC 拦截器 TokenParseInterceptor
